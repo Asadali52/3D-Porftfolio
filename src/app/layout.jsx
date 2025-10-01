@@ -1,4 +1,5 @@
 import "./globals.css";
+import "@fontsource-variable/mona-sans";
 
 export const metadata = {
   title: "Create Next App",
