@@ -1,9 +1,29 @@
+"use client";
+
 import React from 'react';
 import { words } from '@/app/constants';
 import Button from '@/app/components/Button';
 import HeroExperience from '@/app/components/heroModels/HeroExperience';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import AnimatedCounter from '@/app/components/AnimatedCounter';
 
 const Hero = () => {
+
+  useGSAP(() => {
+    gsap.fromTo('.hero-text h1', {
+      y: 50,
+      opacity: 0
+    },
+      {
+        y: 0,
+        opacity: 1,
+        stagger: '0.2s',
+        duration: 1,
+        ease: 'power2.inOut'
+      }
+    )
+  })
 
   return (
     <section id='hero' className='relative overflow-hidden'>
@@ -33,17 +53,24 @@ const Hero = () => {
               <h1>that Deliver Results</h1>
             </div>
             <p className='text-white-50 md:text-xl relative z-10 pointer-events-none'>Hi, I'm Asad, a developer based in Pakistan with a passion for code.</p>
-            <Button id="button" text="See my Work" className="md:w-80 md:h-16 w-60 h-12" />
+            <Button
+              id="button"
+              text="See my Work"
+              className="md:w-80 md:h-16 w-60 h-12"
+            />
           </div>
         </header>
 
         <figure>
-          <div className='hero-3d-layout border-red-200 border-2'>
+          <div className='hero-3d-layout'>
             <HeroExperience />
           </div>
         </figure>
 
       </div>
+
+
+      <AnimatedCounter/>
 
     </section>
   );
