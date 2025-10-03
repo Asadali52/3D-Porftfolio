@@ -5,6 +5,7 @@ import emailjs from "@emailjs/browser";
 
 import TitleHeader from "@/app/components/TitleHeader";
 import ContactExperience from "@/app/components/models/contact/ContactExperience";
+import toast from "react-hot-toast";
 
 const Contact = () => {
   const formRef = useRef(null);
@@ -22,24 +23,47 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show loading state
+
+    if (!form.name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+
+    if (!form.email.trim()) {
+      toast.error("Please enter your email");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    if (!form.message.trim()) {
+      toast.error("Please enter your message");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       await emailjs.sendForm(
-        import.meta.env.VITE_APP_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
         formRef.current,
-        import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
       );
 
-      // Reset form and stop loading
       setForm({ name: "", email: "", message: "" });
+      toast.success("Email sent successfully!");
     } catch (error) {
-      console.error("EmailJS Error:", error); // Optional: show toast
+      console.error("EmailJS Error:", error);
+      toast.error("Something went wrong! Please try again.");
     } finally {
-      setLoading(false); // Always stop loading, even on error
+      setLoading(false);
     }
   };
+
 
   return (
     <section id="contact" className="flex-center section-padding">
@@ -50,7 +74,7 @@ const Contact = () => {
         />
         <div className="grid-12-cols mt-16">
           <div className="xl:col-span-5">
-            <div className="flex-center card-border rounded-xl p-10">
+            <div className="flex-center card-border rounded-xl p-8">
               <form
                 ref={formRef}
                 onSubmit={handleSubmit}
@@ -65,7 +89,6 @@ const Contact = () => {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="What’s your good name?"
-                    required
                     className="outline-none"
                   />
                 </div>
@@ -79,7 +102,6 @@ const Contact = () => {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="What’s your email address?"
-                    required
                     className="outline-none"
                   />
                 </div>
@@ -93,12 +115,11 @@ const Contact = () => {
                     onChange={handleChange}
                     placeholder="How can I help you?"
                     rows="5"
-                    required
                     className="outline-none"
                   />
                 </div>
 
-                <button type="submit">
+                <button type="submit" disabled={loading}>
                   <div className="cta-button group">
                     <div className="bg-circle" />
                     <p className="text">

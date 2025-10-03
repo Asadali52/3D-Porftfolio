@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import "@fontsource-variable/mona-sans";
 
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
       <body
         className={``}
       >
+        <Toaster position="top-right"/>
         {children}
       </body>
     </html>
